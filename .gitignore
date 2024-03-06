@@ -1,0 +1,2 @@
+# Do not push .terraform generated folder
+.terraform/
