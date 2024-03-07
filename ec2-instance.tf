@@ -40,3 +40,14 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"] # Canonical
 }
+
+output "web_server_id" {
+  value = aws_instance.web-server.id
+}
+output "server_private_ip" {
+  value = aws_instance.web-server.private_ip
+}
+
+output "server_prublic_ip" {
+  value = aws_instance.web-server.public_ip
+}
