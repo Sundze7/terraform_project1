@@ -1,3 +1,9 @@
+variable "subnet_prefix" {
+  // can have any of the attributes: "description", "default", or "type"
+  description = "cidr block for the subnet"
+  default = "10.0.66.0/24"
+}
+
 # 1. create vpc
 
 resource "aws_vpc" "prod-vpc" {
@@ -39,12 +45,24 @@ resource "aws_route_table" "prod-rt" {
 
 resource "aws_subnet" "prod-subnet1" {
   vpc_id = aws_vpc.prod-vpc.id
-  cidr_block = "10.0.1.0/24"
+  cidr_block = var.subnet_prefix[0].cidr_block
   availability_zone = "ca-central-1a"
   tags = {
-      Name = "prod-subnet1"
+    #   Name = "prod-subnet1"
+    Name = var.subnet_prefix[0].name
   }
 }
+
+resource "aws_subnet" "prod-subnet2" {
+  vpc_id = aws_vpc.prod-vpc.id
+  cidr_block = var.subnet_prefix[1].cidr_block
+  availability_zone = "ca-central-1b"
+  tags = {
+    #   Name = "prod-subnet2"
+    Name = var.subnet_prefix[1].name
+  }
+}
+
 
 # 5. Associate subnet with route table
 
