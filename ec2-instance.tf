@@ -15,7 +15,12 @@ resource "aws_instance" "web-server" {
     sudo apt install apache2 -y
     sudo systemctl enable apache2
     sudo systemctl start apache2
-    echo "<h1>Hello, World!</h1>" | sudo tee /var/www/html/index.html
+    sudo tee /var/www/html/index.html << INNER_BOB
+    <h1>Hello, World!. Terraform sweet</h1>
+    <h2> How much are you willing to learn and grow </h2>
+    <h3> DEVOPS can make you RIIIICHHHHHH </h3>
+    INNER_BOB
+    # echo "<h1>Hello, World!. Terraform sweet</h1>" | sudo tee /var/www/html/index.html
     # sudo bash -c "echo your very first web server >  /var/www/html/index.html"
     EOF
 

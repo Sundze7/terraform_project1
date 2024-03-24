@@ -71,6 +71,11 @@ resource "aws_route_table_association" "a" {
   route_table_id = aws_route_table.prod-rt.id
 }
 
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.prod-subnet2.id
+  route_table_id = aws_route_table.prod-rt.id
+}
+
 # 6. create security group to allow port 22, 80, 443
 
 resource "aws_security_group" "allow_web" {
@@ -104,12 +109,19 @@ resource "aws_security_group" "allow_web" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  egress = {
-    from_port = 0
-    to_port = 0
-    protocol = "-1" # semantically equivalent to all ports
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+  egress = [
+    {
+      description      = "for all outgoing traffics"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+      prefix_list_ids = []
+      security_groups = []
+      self = false
+    }
+  ]
 }
 
 # 7. create a network interface with an ip address in the subnet in step 4
@@ -122,8 +134,8 @@ resource "aws_network_interface" "web-server-nic" {
 
 # 8. assign an elastic IP to the network interface created in step 7
 
-resource "aws_epi" "one" {
-  vpc = true
+resource "aws_eip" "one" {
+  domain = "vpc"
   network_interface = aws_network_interface.web-server-nic.id
   associate_with_private_ip = "10.0.1.50"
   depends_on = [ aws_internet_gateway.aws-igt ] // passing as a list
